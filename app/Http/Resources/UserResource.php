@@ -21,6 +21,7 @@ class UserResource extends JsonResource
             'first_name' => (string) $this->first_name,
             'last_name' => (string) $this->last_name,
             'username' => (string) $this->username,
+            'photo' => null,
             'email' => (string) $this->email,
             'gender' => $this->gender == User::GENDER_FEMALE ? 'female' : ($this->gender == User::GENDER_MALE ? 'male' : 'none'),
             'created_at' => (string) $this->created_at,
