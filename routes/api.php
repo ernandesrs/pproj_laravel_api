@@ -27,4 +27,5 @@ Route::group([
     Route::post("/register", [AuthController::class, "register"])->name("auth.register");
     Route::post("/register-confirm", [AuthController::class, "verify"])->name("auth.verify");
     Route::post("/login", [AuthController::class, "login"])->name("auth.login");
+    Route::post("/forgot-password", [AuthController::class, "forgotPassword"])->name("auth.forgotPassword");
 });

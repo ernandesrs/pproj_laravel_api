@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Events\ForgotPassword;
 use App\Events\UserRegistered;
+use App\Listeners\SendPasswordResetLink;
 use App\Listeners\SendRegisterVerificationLink;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -23,6 +25,10 @@ class EventServiceProvider extends ServiceProvider
 
         UserRegistered::class => [
             SendRegisterVerificationLink::class
+        ],
+
+        ForgotPassword::class => [
+            SendPasswordResetLink::class,
         ],
     ];
 

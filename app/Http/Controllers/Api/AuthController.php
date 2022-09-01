@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\ForgotPassword;
 use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\AuthForgotPasswordRequest;
 use App\Http\Requests\Auth\AuthLoginRequest;
 use App\Http\Requests\Auth\AuthRegisterRequest;
 use App\Http\Requests\Auth\AuthVerificationRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Models\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -54,7 +57,7 @@ class AuthController extends Controller
         if (empty($user)) {
             return response()->json([
                 'error' => 'InvalidVerificationToken',
-            ]);
+            ], 422);
         }
 
         $user->confirmation_token = null;
@@ -96,5 +99,31 @@ class AuthController extends Controller
                 'expires_in' => config("jwt.ttl"),
             ],
         ]);
+    }
+
+    /**
+     * @param AuthForgotPasswordRequest $request
+     * @return JsonResponse
+     */
+    public function forgotPassword(AuthForgotPasswordRequest $request)
+    {
+        $validated = $request->validated();
+
+        $user = User::where("email", $validated["email"])->first();
+        if (empty($user)) {
+            return response()->json([
+                'error' => 'UserNotFound',
+            ], 404);
+        }
+
+        $token = Str::random(50);
+        PasswordReset::create([
+            'email' => $user->email,
+            'token' => $token
+        ]);
+
+        event(new ForgotPassword($user, $token));
+
+        return response()->json([]);
     }
 }
