@@ -6,6 +6,7 @@ use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthLoginRequest;
 use App\Http\Requests\AuthRegisterRequest;
+use App\Http\Requests\AuthVerificationRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -34,6 +35,31 @@ class AuthController extends Controller
         ]);
 
         event(new UserRegistered($user));
+
+        return response()->json([
+            'user' => new UserResource($user)
+        ]);
+    }
+
+    /**
+     * @param AuthVerificationRequest $request
+     * @return JsonResponse
+     */
+    public function verify(AuthVerificationRequest $request)
+    {
+        $validated = $request->validated();
+        $tokenDecoded = base64_decode($validated["token"]);
+
+        $user = User::where('confirmation_token', $tokenDecoded)->first();
+        if (empty($user)) {
+            return response()->json([
+                'error' => 'InvalidVerificationToken',
+            ]);
+        }
+
+        $user->confirmation_token = null;
+        $user->email_verified_at = now();
+        $user->save();
 
         return response()->json([
             'user' => new UserResource($user)
