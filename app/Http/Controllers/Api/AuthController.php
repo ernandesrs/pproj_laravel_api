@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthRegisterRequest;
 use App\Models\User;
@@ -28,6 +29,8 @@ class AuthController extends Controller
             'gender' => $validated['gender'] ?? User::GENDER_NONE,
             'password' => Hash::make($validated['password']),
         ]);
+
+        event(new UserRegistered($user));
 
         return response()->json([
             'user' => $user
