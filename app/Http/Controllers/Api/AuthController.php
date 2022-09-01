@@ -103,6 +103,21 @@ class AuthController extends Controller
     }
 
     /**
+     * @return JsonResponse
+     */
+    public function logout()
+    {
+        if (auth()->user())
+            auth()->logout();
+        else
+            return response()->json([
+                'notlogged'
+            ]);
+
+        return response()->json([]);
+    }
+
+    /**
      * @param AuthForgotPasswordRequest $request
      * @return JsonResponse
      */
