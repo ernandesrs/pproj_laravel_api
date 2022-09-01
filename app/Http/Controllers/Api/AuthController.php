@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AuthLoginRequest;
-use App\Http\Requests\AuthRegisterRequest;
-use App\Http\Requests\AuthVerificationRequest;
+use App\Http\Requests\Auth\AuthLoginRequest;
+use App\Http\Requests\Auth\AuthRegisterRequest;
+use App\Http\Requests\Auth\AuthVerificationRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
