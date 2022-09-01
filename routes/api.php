@@ -38,6 +38,7 @@ Route::group([
 
     Route::group([
         'prefix' => 'admin',
+        'middleware' => 'admin',
     ], function () {
         Route::post("/users", [AdminUserController::class, "index"])->name("admin.users.index");
     });
