@@ -13,6 +13,11 @@ class UserController extends Controller
     /**
      * @var integer
      */
+    private $maxLimit = 32;
+
+    /**
+     * @var integer
+     */
     private $limit = 12;
 
     /**
@@ -91,9 +96,15 @@ class UserController extends Controller
     private function filter(Request $request)
     {
         $validated = [
-            'limit' => filter_var($request->get("limit", $this->limit)),
-            'order' => filter_var($request->get("order", $this->order[1]))
+            'limit' => filter_var($request->get("limit"), FILTER_VALIDATE_INT),
+            'order' => filter_var($request->get("order"))
         ];
+
+        if (!$validated["limit"] || $validated["limit"] > $this->maxLimit)
+            $validated["limit"] = $this->limit;
+
+        if (!$validated["order"] || !in_array($validated["order"], $this->order))
+            $validated["order"] = $this->order[1];
 
         $users = User::whereNotNull("id")->orderBy("created_at", $validated["order"]);
 
