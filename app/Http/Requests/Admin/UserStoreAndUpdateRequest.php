@@ -15,6 +15,9 @@ class UserStoreAndUpdateRequest extends FormRequest
      */
     public function authorize()
     {
+        if ($this->user && auth()->user()->level <= $this->user->level)
+            return false;
+
         return true;
     }
 
@@ -34,6 +37,12 @@ class UserStoreAndUpdateRequest extends FormRequest
             'email' => ['required', 'unique:users,email', 'email'],
             'password' => ['required', 'string', 'confirmed'],
         ];
+
+        if ($this->user) {
+            $rules['password'] = ['nullable', 'string', 'confirmed'];
+            $rules['username'] = ['required', 'max:25', 'unique:users,username,' . $this->user->id];
+            unset($rules['email']);
+        }
 
         return $rules;
     }

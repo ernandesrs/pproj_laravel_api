@@ -78,7 +78,7 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  User $user
      * @return JsonResponse
      */
     public function show($id)
@@ -89,19 +89,32 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param UserStoreAndUpdateRequest $request
+     * @param User $user
      * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(UserStoreAndUpdateRequest $request, User $user)
     {
-        //
+        $validated = $request->validated();
+
+        $user->first_name = $validated["first_name"];
+        $user->last_name = $validated["last_name"];
+        $user->username = $validated["username"];
+        $user->gender = $validated["gender"] ?? $user->gender;
+        if ($password = $validated["password"] ?? null)
+            $user->password = Hash::make($password);
+
+        $user->save();
+
+        return response()->json([
+            'user' => new UserResource($user)
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param User $user
      * @return JsonResponse
      */
     public function destroy($id)

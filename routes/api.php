@@ -42,5 +42,6 @@ Route::group([
     ], function () {
         Route::get("/users", [AdminUserController::class, "index"])->name("admin.users.index");
         Route::post("/user/store", [AdminUserController::class, "store"])->name("admin.users.store");
+        Route::post("/user/update/{user}", [AdminUserController::class, "update"])->name("admin.users.update");
     });
 });
