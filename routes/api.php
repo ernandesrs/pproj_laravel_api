@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -33,5 +34,11 @@ Route::group([
         Route::post("/register-confirm", [AuthController::class, "verify"])->name("auth.verify");
         Route::post("/forgot-password", [AuthController::class, "forgotPassword"])->name("auth.forgotPassword");
         Route::post("/reset-password", [AuthController::class, "resetPassword"])->name("auth.resetPassword");
+    });
+
+    Route::group([
+        'prefix' => 'admin',
+    ], function () {
+        Route::post("/users", [AdminUserController::class, "index"])->name("admin.users.index");
     });
 });
