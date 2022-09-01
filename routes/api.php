@@ -24,10 +24,14 @@ Route::group([
         ]);
     });
 
-    Route::post("/register", [AuthController::class, "register"])->name("auth.register");
-    Route::post("/register-confirm", [AuthController::class, "verify"])->name("auth.verify");
-    Route::post("/login", [AuthController::class, "login"])->name("auth.login");
-    Route::post("/logout", [AuthController::class, "logout"])->name("auth.logout");
-    Route::post("/forgot-password", [AuthController::class, "forgotPassword"])->name("auth.forgotPassword");
-    Route::post("/reset-password", [AuthController::class, "resetPassword"])->name("auth.resetPassword");
+    Route::group([
+        'prefix' => 'auth'
+    ], function () {
+        Route::post("/login", [AuthController::class, "login"])->name("auth.login");
+        Route::post("/logout", [AuthController::class, "logout"])->name("auth.logout");
+        Route::post("/register", [AuthController::class, "register"])->name("auth.register");
+        Route::post("/register-confirm", [AuthController::class, "verify"])->name("auth.verify");
+        Route::post("/forgot-password", [AuthController::class, "forgotPassword"])->name("auth.forgotPassword");
+        Route::post("/reset-password", [AuthController::class, "resetPassword"])->name("auth.resetPassword");
+    });
 });
