@@ -3,18 +3,40 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    /**
+     * @var integer
+     */
+    private $limit = 12;
+
+    /**
+     * @var array
+     */
+    private $order = ['asc', 'desc'];
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        dd("listagem de usuários");
+        $users = $this->filter($request);
+
+        $resources = $users->map(function ($user) {
+            return new UserResource($user);
+        });
+
+        return response()->json([
+            'users' => $resources,
+            "pagination" => $users->links()->render()
+        ]);
     }
 
     /**
@@ -60,5 +82,21 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    private function filter(Request $request)
+    {
+        $validated = [
+            'limit' => filter_var($request->get("limit", $this->limit)),
+            'order' => filter_var($request->get("order", $this->order[1]))
+        ];
+
+        $users = User::whereNotNull("id")->orderBy("created_at", $validated["order"]);
+
+        return $users->paginate($validated["limit"]);
     }
 }
