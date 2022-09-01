@@ -36,7 +36,7 @@ class AuthController extends Controller
         event(new UserRegistered($user));
 
         return response()->json([
-            'user' => $user
+            'user' => new UserResource($user)
         ]);
     }
 
