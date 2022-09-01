@@ -13,14 +13,40 @@ class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public const LEVEL_1 = 1;
+    public const LEVEL_2 = 2;
+    public const LEVEL_8 = 8;
+    public const LEVEL_MASTER = 9;
+    public const LEVELS = [
+        self::LEVEL_1,
+        self::LEVEL_2,
+        self::LEVEL_8,
+        self::LEVEL_MASTER,
+    ];
+
+    public const GENDER_NONE = 0;
+    public const GENDER_MALE = 1;
+    public const GENDER_FEMALE = 2;
+    public const GENDERS = [
+        self::GENDER_NONE,
+        self::GENDER_MALE,
+        self::GENDER_FEMALE,
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
+        'username',
+        'level',
+        'gender',
+        'photo',
         'email',
+        'confirmation_token',
         'password',
     ];
 
@@ -42,6 +68,24 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * User levels
+     * @return array
+     */
+    public static function levels()
+    {
+        return self::LEVELS;
+    }
+
+    /**
+     * User genders
+     * @return array
+     */
+    public static function genders()
+    {
+        return self::GENDERS;
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
