@@ -41,5 +41,6 @@ Route::group([
         'middleware' => 'admin',
     ], function () {
         Route::get("/users", [AdminUserController::class, "index"])->name("admin.users.index");
+        Route::post("/user/store", [AdminUserController::class, "store"])->name("admin.users.store");
     });
 });

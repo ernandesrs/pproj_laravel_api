@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UserStoreAndUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -28,7 +32,7 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function index(Request $request)
     {
@@ -47,19 +51,35 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param UserStoreAndUpdateRequest $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(UserStoreAndUpdateRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $user = User::create([
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'confirmation_token' => Str::random(25),
+            'gender' => $validated['gender'] ?? User::GENDER_NONE,
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        event(new UserRegistered($user));
+
+        return response()->json([
+            'user' => new UserResource($user)
+        ]);
     }
 
     /**
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function show($id)
     {
@@ -71,7 +91,7 @@ class UserController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function update(Request $request, $id)
     {
@@ -82,7 +102,7 @@ class UserController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function destroy($id)
     {
