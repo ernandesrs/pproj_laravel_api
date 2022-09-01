@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\AuthForgotPasswordRequest;
 use App\Http\Requests\Auth\AuthLoginRequest;
 use App\Http\Requests\Auth\AuthRegisterRequest;
+use App\Http\Requests\Auth\AuthResetPasswordRequest;
 use App\Http\Requests\Auth\AuthVerificationRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -123,6 +124,36 @@ class AuthController extends Controller
         ]);
 
         event(new ForgotPassword($user, $token));
+
+        return response()->json([]);
+    }
+
+    /**
+     * @param AuthResetPasswordRequest $request
+     * @return JsonResponse
+     */
+    public function resetPassword(AuthResetPasswordRequest $request)
+    {
+        $validated = $request->validated();
+
+        $reset = PasswordReset::where("email", $validated["email"])->where("token", $validated["token"])->first();
+        if (empty($reset)) {
+            return response()->json([
+                'error' => 'InvalidResetToken'
+            ], 404);
+        }
+
+        $user = User::where("email", $reset->email)->first();
+        if (empty($user)) {
+            return response()->json([
+                'error' => 'UserNotFound'
+            ], 404);
+        }
+
+        $user->password = Hash::make($validated["password"]);
+        $user->save();
+
+        PasswordReset::where("email", $reset->email)->delete();
 
         return response()->json([]);
     }
