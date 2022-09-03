@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
@@ -151,7 +152,8 @@ class UserController extends Controller
         $user->save();
 
         return response()->json([
-            "user" => (new UserResource($user))
+            "user" => (new UserResource($user)),
+            "photo_url" => Storage::url($user->photo)
         ]);
     }
 
