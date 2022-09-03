@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Events\ForgotPassword;
 use App\Events\UserRegistered;
+use App\Exceptions\Auth\AuthAuthenticationFailed;
+use App\Exceptions\Auth\AuthInvalidResetToken;
+use App\Exceptions\Auth\AuthInvalidVerificationToken;
+use App\Exceptions\Auth\AuthUserNotFound;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\AuthForgotPasswordRequest;
 use App\Http\Requests\Auth\AuthLoginRequest;
@@ -48,6 +52,7 @@ class AuthController extends Controller
     /**
      * @param AuthVerificationRequest $request
      * @return JsonResponse
+     * @throws AuthInvalidVerificationToken
      */
     public function verify(AuthVerificationRequest $request)
     {
@@ -56,9 +61,7 @@ class AuthController extends Controller
 
         $user = User::where('confirmation_token', $tokenDecoded)->first();
         if (empty($user)) {
-            return response()->json([
-                'error' => 'InvalidVerificationToken',
-            ], 422);
+            throw new AuthInvalidVerificationToken();
         }
 
         $user->confirmation_token = null;
@@ -73,6 +76,7 @@ class AuthController extends Controller
     /**
      * @param AuthLoginRequest $request
      * @return JsonResponse
+     * @throws AuthUserNotFound|AuthAuthenticationFailed
      */
     public function login(AuthLoginRequest $request)
     {
@@ -80,16 +84,12 @@ class AuthController extends Controller
 
         $user = User::where("email", $validated["email"])->first();
         if (empty($user)) {
-            return response()->json([
-                'error' => 'UserNotFound'
-            ], 404);
+            throw new AuthUserNotFound();
         }
 
         $token = Auth::attempt($validated);
         if (!$token) {
-            return response()->json([
-                'error' => 'Unauthorized'
-            ], 401);
+            throw new AuthAuthenticationFailed();
         }
 
         return response()->json([
@@ -127,9 +127,7 @@ class AuthController extends Controller
 
         $user = User::where("email", $validated["email"])->first();
         if (empty($user)) {
-            return response()->json([
-                'error' => 'UserNotFound',
-            ], 404);
+            throw new AuthUserNotFound();
         }
 
         $token = Str::random(50);
@@ -146,6 +144,7 @@ class AuthController extends Controller
     /**
      * @param AuthResetPasswordRequest $request
      * @return JsonResponse
+     * @throws AuthInvalidResetToken|AuthUserNotFound
      */
     public function resetPassword(AuthResetPasswordRequest $request)
     {
@@ -153,16 +152,12 @@ class AuthController extends Controller
 
         $reset = PasswordReset::where("email", $validated["email"])->where("token", $validated["token"])->first();
         if (empty($reset)) {
-            return response()->json([
-                'error' => 'InvalidResetToken'
-            ], 404);
+            throw new AuthInvalidResetToken();
         }
 
         $user = User::where("email", $reset->email)->first();
         if (empty($user)) {
-            return response()->json([
-                'error' => 'UserNotFound'
-            ], 404);
+            throw new AuthUserNotFound();
         }
 
         $user->password = Hash::make($validated["password"]);
