@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Events\UserRegistered;
+use App\Exceptions\Admin\AdminNotHavePermission;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserStoreAndUpdateRequest;
 use App\Http\Resources\UserResource;
@@ -116,15 +117,15 @@ class UserController extends Controller
      *
      * @param User $user
      * @return JsonResponse
+     * @throws AdminNotHavePermission
      */
     public function destroy(User $user)
     {
         $logged = auth()->user();
 
-        if ($logged->id == $user->id || $logged->level <= $user->level)
-            return response()->json([
-                'error' => 'NotHavePermission'
-            ], 401);
+        if ($logged->id == $user->id || $logged->level <= $user->level) {
+            throw new AdminNotHavePermission();
+        }
 
         $user->delete();
 
