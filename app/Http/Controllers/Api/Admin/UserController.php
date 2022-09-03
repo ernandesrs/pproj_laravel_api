@@ -117,9 +117,18 @@ class UserController extends Controller
      * @param User $user
      * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        //
+        $logged = auth()->user();
+
+        if ($logged->id == $user->id || $logged->level <= $user->level)
+            return response()->json([
+                'error' => 'NotHavePermission'
+            ], 401);
+
+        $user->delete();
+
+        return response()->json([]);
     }
 
     /**
