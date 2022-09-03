@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Events\UserRegistered;
 use App\Exceptions\Admin\AdminNotHavePermission;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UserPhotoStoreRequest;
 use App\Http\Requests\Admin\UserStoreAndUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -15,6 +16,11 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
+    /**
+     * @var string
+     */
+    private $photoDir = "avatars";
+
     /**
      * @var integer
      */
@@ -130,6 +136,23 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json([]);
+    }
+
+    /**
+     * Store the uploaded user photo
+     *
+     * @param UserPhotoStoreRequest $request
+     * @param User $user
+     * @return JsonResponse
+     */
+    public function photoStore(UserPhotoStoreRequest $request, User $user)
+    {
+        $user->photo = $request->file("photo")->store($this->photoDir, "public");
+        $user->save();
+
+        return response()->json([
+            "user" => (new UserResource($user))
+        ]);
     }
 
     /**
