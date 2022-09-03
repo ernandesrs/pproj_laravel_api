@@ -148,12 +148,34 @@ class UserController extends Controller
      */
     public function photoStore(UserPhotoStoreRequest $request, User $user)
     {
+        if ($user->photo)
+            $this->photoDelete($user);
+
         $user->photo = $request->file("photo")->store($this->photoDir, "public");
         $user->save();
 
         return response()->json([
             "user" => (new UserResource($user)),
             "photo_url" => Storage::url($user->photo)
+        ]);
+    }
+
+    /**
+     * Delete the uploaded user photo
+     *
+     * @param User $user
+     * @return JsonResponse
+     */
+    public function photoDelete(User $user)
+    {
+        if ($user->photo) {
+            Storage::disk("public")->delete("{$user->photo}");
+            $user->photo = null;
+            $user->save();
+        }
+
+        return response()->json([
+            "user" => (new UserResource($user)),
         ]);
     }
 

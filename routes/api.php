@@ -45,5 +45,6 @@ Route::group([
         Route::post("/user/update/{user}", [AdminUserController::class, "update"])->name("admin.users.update");
         Route::post("/user/destroy/{user}", [AdminUserController::class, "destroy"])->name("admin.users.destroy");
         Route::post("/user/photo-store/{user}", [AdminUserController::class, "photoStore"])->name("admin.users.photoStore");
+        Route::post("/user/photo-delete/{user}", [AdminUserController::class, "photoDelete"])->name("admin.users.photoDelete");
     });
 });
