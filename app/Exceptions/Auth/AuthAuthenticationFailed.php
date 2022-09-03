@@ -2,15 +2,23 @@
 
 namespace App\Exceptions\Auth;
 
-use App\Exceptions\MyExceptionTrait;
 use Exception;
 
 class AuthAuthenticationFailed extends Exception
 {
-    use MyExceptionTrait;
-
     /**
      * @var string
      */
     protected $message = "Email or/and password don\'t match";
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function render()
+    {
+        return response()->json([
+            'error' => class_basename($this),
+            'message' => $this->message,
+        ], 401);
+    }
 }
