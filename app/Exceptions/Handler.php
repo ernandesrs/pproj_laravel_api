@@ -39,10 +39,5 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
-
-        $this->renderable(function (NotFoundHttpException $e, $request) {
-            if (!$request->isMethod("GET"))
-                throw new NotFoundResource();
-        });
     }
 }
