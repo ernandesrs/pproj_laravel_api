@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\Thumb;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MeUpdateFormRequest;
 use App\Http\Resources\UserResource;
@@ -39,6 +40,7 @@ class MeController extends Controller
         // photo
         if ($photo = $validated["photo"] ?? null) {
             if ($me->photo) {
+                Thumb::clear($me->photo);
                 Storage::delete("public/{$me->photo}");
             }
 

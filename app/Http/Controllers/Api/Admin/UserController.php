@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Events\UserRegistered;
 use App\Exceptions\Admin\AdminNotHavePermission;
+use App\Helpers\Thumb;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserPhotoStoreRequest;
 use App\Http\Requests\Admin\UserStoreAndUpdateRequest;
@@ -169,6 +170,7 @@ class UserController extends Controller
     public function photoDelete(User $user)
     {
         if ($user->photo) {
+            Thumb::clear($user->photo);
             Storage::disk("public")->delete("{$user->photo}");
             $user->photo = null;
             $user->save();

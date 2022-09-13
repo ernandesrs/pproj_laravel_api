@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Helpers\Thumb;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
@@ -22,16 +23,16 @@ class UserResource extends JsonResource
             'first_name' => (string) $this->first_name,
             'last_name' => (string) $this->last_name,
             'username' => (string) $this->username,
-            'photo' => null,
             'email' => (string) $this->email,
             'gender' => $this->gender,
             'created_at' => (string) $this->created_at,
         ];
 
         // make thumb
-        if ($this->photo) {
-            $arr['photo'] = Storage::url($this->photo);
-        }
+        $arr['photo'] = $this->photo ? Storage::url($this->photo) : Thumb::thumb(null, "user.large");
+        $arr['thumb_small'] = Thumb::thumb($this->photo, "user.small");
+        $arr['thumb_normal'] = Thumb::thumb($this->photo, "user.normal");
+        $arr['thumb_large'] = Thumb::thumb($this->photo, "user.large");
 
         return $arr;
     }
