@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\MeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,13 @@ Route::group([
         Route::post("/register-confirm", [AuthController::class, "verify"])->name("auth.verify");
         Route::post("/forgot-password", [AuthController::class, "forgotPassword"])->name("auth.forgotPassword");
         Route::post("/reset-password", [AuthController::class, "resetPassword"])->name("auth.resetPassword");
+    });
+
+    Route::group([
+        "prefix" => "me",
+        "middleware" => "me"
+    ], function () {
+        Route::get("/", [MeController::class, "me"])->name("me.me");
     });
 
     Route::group([
