@@ -42,6 +42,7 @@ Route::group([
         "middleware" => "me"
     ], function () {
         Route::get("/", [MeController::class, "index"])->name("me.index");
+        Route::post("/", [MeController::class, "update"])->name("me.update");
     });
 
     Route::group([
