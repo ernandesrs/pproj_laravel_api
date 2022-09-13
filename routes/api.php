@@ -41,7 +41,7 @@ Route::group([
         "prefix" => "me",
         "middleware" => "me"
     ], function () {
-        Route::get("/", [MeController::class, "me"])->name("me.me");
+        Route::get("/", [MeController::class, "index"])->name("me.index");
     });
 
     Route::group([
