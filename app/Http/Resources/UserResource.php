@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class UserResource extends JsonResource
 {
@@ -23,13 +24,13 @@ class UserResource extends JsonResource
             'username' => (string) $this->username,
             'photo' => null,
             'email' => (string) $this->email,
-            'gender' => $this->gender == User::GENDER_FEMALE ? 'female' : ($this->gender == User::GENDER_MALE ? 'male' : 'none'),
+            'gender' => $this->gender,
             'created_at' => (string) $this->created_at,
         ];
 
         // make thumb
         if ($this->photo) {
-            $arr['photo'] = $this->photo;
+            $arr['photo'] = Storage::url($this->photo);
         }
 
         return $arr;
