@@ -90,9 +90,9 @@ class UserController extends Controller
      * @param  User $user
      * @return JsonResponse
      */
-    public function show($id)
+    public function show(User $user)
     {
-        //
+        return new UserResource($user);
     }
 
     /**
@@ -198,7 +198,7 @@ class UserController extends Controller
         if (!$validated["order"] || !in_array($validated["order"], $this->order))
             $validated["order"] = $this->order[1];
 
-        $users = User::whereNotNull("id")->orderBy("created_at", $validated["order"]);
+        $users = User::whereNotNull("id")->orderBy("level", $this->order[1])->orderBy("created_at", $validated["order"]);
 
         return $users->paginate($validated["limit"]);
     }

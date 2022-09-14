@@ -24,8 +24,9 @@ class UserResource extends JsonResource
             'last_name' => (string) $this->last_name,
             'username' => (string) $this->username,
             'email' => (string) $this->email,
-            'gender' => $this->gender,
+            'gender' => (int) $this->gender,
             'created_at' => (string) $this->created_at,
+            'level' => (int) $this->level,
         ];
 
         // make thumb

@@ -50,6 +50,7 @@ Route::group([
         'middleware' => 'admin',
     ], function () {
         Route::get("/users", [AdminUserController::class, "index"])->name("admin.users.index");
+        Route::get("/user/show/{user}", [AdminUserController::class, "show"])->name("admin.users.show");
         Route::post("/user/store", [AdminUserController::class, "store"])->name("admin.users.store");
         Route::post("/user/update/{user}", [AdminUserController::class, "update"])->name("admin.users.update");
         Route::post("/user/destroy/{user}", [AdminUserController::class, "destroy"])->name("admin.users.destroy");
