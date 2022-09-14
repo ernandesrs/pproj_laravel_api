@@ -110,6 +110,17 @@ class UserController extends Controller
         $user->last_name = $validated["last_name"];
         $user->username = $validated["username"];
         $user->gender = $validated["gender"] ?? $user->gender;
+
+        // photo
+        if ($photo = $validated["photo"] ?? null) {
+            if ($user->photo) {
+                Thumb::clear($user->photo);
+                Storage::delete("public/{$user->photo}");
+            }
+
+            $user->photo = $photo->store($this->photoDir, "public");
+        }
+
         if ($password = $validated["password"] ?? null)
             $user->password = Hash::make($password);
 

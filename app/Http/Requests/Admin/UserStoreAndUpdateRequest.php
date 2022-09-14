@@ -33,7 +33,7 @@ class UserStoreAndUpdateRequest extends FormRequest
             'last_name' => ['required', 'max:50'],
             'username' => ['required', 'max:25', 'unique:users,username'],
             'gender' => ['nullable', Rule::in(User::GENDERS)],
-            'photo' => ['nullable', 'mimes:png,jpg,webp', 'max:2500'],
+            'photo' => ['nullable', 'mimes:png,jpg,webp', 'max:5000'],
             'email' => ['required', 'unique:users,email', 'email'],
             'password' => ['required', 'string', 'confirmed'],
         ];

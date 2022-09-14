@@ -17,7 +17,7 @@ class AdminAccess
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!$request->user() || !in_array($request->user()->level, [User::LEVEL_MASTER])) {
+        if (!$request->user() || !in_array($request->user()->level, [User::LEVEL_8, User::LEVEL_MASTER])) {
             return response()->json([
                 'error' => 'Unauthorized'
             ], 401);
