@@ -4,7 +4,7 @@ namespace App\Exceptions\Admin;
 
 use Exception;
 
-class AdminNotHavePermission extends Exception
+class NotHavePermission extends Exception
 {
     /**
      * @var string

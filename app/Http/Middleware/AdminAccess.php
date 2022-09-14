@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Exceptions\Unauthorized;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
@@ -18,9 +19,7 @@ class AdminAccess
     public function handle(Request $request, Closure $next)
     {
         if (!$request->user() || !in_array($request->user()->level, [User::LEVEL_8, User::LEVEL_MASTER])) {
-            return response()->json([
-                'error' => 'Unauthorized'
-            ], 401);
+            throw new Unauthorized();
         }
 
         return $next($request);

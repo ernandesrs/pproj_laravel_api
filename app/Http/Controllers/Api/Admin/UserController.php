@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Events\UserRegistered;
-use App\Exceptions\Admin\AdminNotHavePermission;
+use App\Exceptions\Admin\NotHavePermission;
 use App\Helpers\Thumb;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserPhotoStoreRequest;
@@ -68,19 +68,19 @@ class UserController extends Controller
         $validated = $request->validated();
 
         $user = User::create([
-            'first_name' => $validated['first_name'],
-            'last_name' => $validated['last_name'],
-            'username' => $validated['username'],
-            'email' => $validated['email'],
-            'confirmation_token' => Str::random(25),
-            'gender' => $validated['gender'] ?? User::GENDER_NONE,
-            'password' => Hash::make($validated['password']),
+            "first_name" => $validated["first_name"],
+            "last_name" => $validated["last_name"],
+            "username" => $validated["username"],
+            "email" => $validated["email"],
+            "confirmation_token" => Str::random(25),
+            "gender" => $validated["gender"] ?? User::GENDER_NONE,
+            "password" => Hash::make($validated["password"]),
         ]);
 
         event(new UserRegistered($user));
 
         return response()->json([
-            'user' => new UserResource($user)
+            "user" => new UserResource($user)
         ]);
     }
 
@@ -92,7 +92,9 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return new UserResource($user);
+        return response()->json([
+            "user" => new UserResource($user)
+        ]);
     }
 
     /**
@@ -127,7 +129,7 @@ class UserController extends Controller
         $user->save();
 
         return response()->json([
-            'user' => new UserResource($user)
+            "user" => new UserResource($user)
         ]);
     }
 
@@ -136,14 +138,14 @@ class UserController extends Controller
      *
      * @param User $user
      * @return JsonResponse
-     * @throws AdminNotHavePermission
+     * @throws NotHavePermission
      */
     public function destroy(User $user)
     {
         $logged = auth()->user();
 
         if ($logged->id == $user->id || $logged->level <= $user->level) {
-            throw new AdminNotHavePermission();
+            throw new NotHavePermission();
         }
 
         $user->delete();

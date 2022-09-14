@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Exceptions\Admin\NotHavePermission;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -16,7 +17,7 @@ class UserStoreAndUpdateRequest extends FormRequest
     public function authorize()
     {
         if ($this->user && auth()->user()->level <= $this->user->level)
-            return false;
+            throw new NotHavePermission();
 
         return true;
     }
