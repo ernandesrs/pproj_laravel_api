@@ -47,13 +47,16 @@ class UserController extends Controller
     {
         $users = $this->filter($request);
 
-        $resources = $users->map(function ($user) {
+        $userResources = $users->map(function ($user) {
             return new UserResource($user);
         });
 
+        $pagination = $users->toArray();
+        unset($pagination["data"], $pagination["links"]);
+
         return response()->json([
-            'users' => $resources,
-            "pagination" => $users->links()->render()
+            "users" => $userResources,
+            "pagination" => $pagination
         ]);
     }
 
