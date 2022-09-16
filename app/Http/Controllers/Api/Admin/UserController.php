@@ -214,7 +214,9 @@ class UserController extends Controller
 
         $user->save();
 
-        return new UserResource($user);
+        return response()->json([
+            "user" => new UserResource($user)
+        ]);
     }
 
     /**
@@ -234,7 +236,9 @@ class UserController extends Controller
 
         $user->save();
 
-        return new UserResource($user);
+        return response()->json([
+            "user" => new UserResource($user)
+        ]);
     }
 
     /**
