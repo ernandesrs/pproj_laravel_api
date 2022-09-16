@@ -56,5 +56,7 @@ Route::group([
         Route::post("/user/destroy/{user}", [AdminUserController::class, "destroy"])->name("admin.users.destroy");
         Route::post("/user/photo-store/{user}", [AdminUserController::class, "photoStore"])->name("admin.users.photoStore");
         Route::post("/user/photo-delete/{user}", [AdminUserController::class, "photoDelete"])->name("admin.users.photoDelete");
+        Route::get("/user/promote/{user}", [AdminUserController::class, "promote"])->name("admin.users.promote");
+        Route::get("/user/demote/{user}", [AdminUserController::class, "demote"])->name("admin.users.demote");
     });
 });

@@ -198,6 +198,46 @@ class UserController extends Controller
     }
 
     /**
+     * @param User $user
+     * @return JsonResponse
+     */
+    public function promote(User $user)
+    {
+        $logged = auth()->user();
+        if ($logged->id == $user->id || $logged->level != User::LEVEL_MASTER || $user->level == User::LEVEL_8)
+            throw new NotHavePermission();
+
+        if ($user->level == User::LEVEL_1)
+            $user->level = User::LEVEL_2;
+        else if ($user->level == User::LEVEL_2)
+            $user->level = User::LEVEL_8;
+
+        $user->save();
+
+        return new UserResource($user);
+    }
+
+    /**
+     * @param User $user
+     * @return JsonResponse
+     */
+    public function demote(User $user)
+    {
+        $logged = auth()->user();
+        if ($logged->id == $user->id || $logged->level != User::LEVEL_MASTER || $user->level == User::LEVEL_1)
+            throw new NotHavePermission();
+
+        if ($user->level == User::LEVEL_8)
+            $user->level = User::LEVEL_2;
+        else if ($user->level == User::LEVEL_2)
+            $user->level = User::LEVEL_1;
+
+        $user->save();
+
+        return new UserResource($user);
+    }
+
+    /**
      * @param Request $request
      * @return \Illuminate\Database\Eloquent\Builder
      */
