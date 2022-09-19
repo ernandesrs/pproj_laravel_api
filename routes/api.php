@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\AdminController;
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MeController;
@@ -49,6 +50,8 @@ Route::group([
         'prefix' => 'admin',
         'middleware' => 'admin',
     ], function () {
+        Route::get("/", [AdminController::class, "dash"])->name("admin.dash");
+
         Route::get("/users", [AdminUserController::class, "index"])->name("admin.users.index");
         Route::get("/user/show/{user}", [AdminUserController::class, "show"])->name("admin.users.show");
         Route::post("/user/store", [AdminUserController::class, "store"])->name("admin.users.store");
