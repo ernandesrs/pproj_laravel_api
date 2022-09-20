@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MeUpdateFormRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -23,7 +24,7 @@ class MeController extends Controller
 
     /**
      * @param MeUpdateFormRequest $request
-     * @return UserResource
+     * @return JsonResponse
      */
     public function update(MeUpdateFormRequest $request)
     {
@@ -53,6 +54,8 @@ class MeController extends Controller
 
         $me->save();
 
-        return new UserResource($me);
+        return response()->json([
+            "user" => new UserResource($me)
+        ]);
     }
 }
